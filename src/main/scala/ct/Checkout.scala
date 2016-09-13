@@ -44,7 +44,16 @@ object Strategies {
     def empty = Checked.ZERO
     def combine(c1: Checked, c2: Checked): Checked = {
 
-      def discount(item: Item, initial: Checked): (BigDecimal, Int) = ???
+      def discount(item: Item, initial: Checked): (BigDecimal, Int) = {
+        val skipBy = item match {
+          case Apple => 2
+          case Orange => 3
+        }
+        val no = initial.scanned.get(item).getOrElse(0)
+        val discount: BigDecimal = (no / skipBy) * Checkout.price(item)
+        val left = no % skipBy
+        (discount, left)
+      }
 
       val initial = c1.copy(sum = c1.sum + c2.sum, scanned = c1.scanned |+| c2.scanned)
       val (applesDiscount, applesLeft) = discount(Apple, initial)
