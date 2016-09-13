@@ -8,6 +8,13 @@ object Item {
   def all: Seq[Item] = List(Apple, Orange)
 }
 
+case class Checked(sum: BigDecimal, scanned: Map[Item, Int])
+
+object Checked {
+  val ZERO: Checked = Checked(sum = BigDecimal("0.0"), scanned = Map())
+  def apply(item: Item): Checked = Checked(sum = Checkout.price(item), scanned = Map(item -> 1))
+}
+
 object Checkout {
 
   def price(item: Item) = item match {
