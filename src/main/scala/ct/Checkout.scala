@@ -25,12 +25,8 @@ object Checkout {
     case Orange => BigDecimal("0.25")
   }
 
-  def totalCost(items: List[Item])(implicit monoid: Monoid[Checked]): BigDecimal = {
-    val checked = items.foldLeft(monoid.empty) {
-      case (acc, item) => acc |+| Checked(item)
-    }
-    checked.sum
-  }
+  def totalCost(items: List[Item])(implicit monoid: Monoid[Checked]): BigDecimal =
+    items.foldMap(item => Checked(item)).sum
 }
 
 object Strategies {
