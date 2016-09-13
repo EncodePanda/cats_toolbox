@@ -1,5 +1,8 @@
 package ct
 
+import cats._
+import cats.implicits._
+
 sealed trait Item
 object Apple extends Item
 object Orange extends Item
@@ -22,8 +25,18 @@ object Checkout {
     case Orange => BigDecimal("0.25")
   }
 
-  def totalCost(items: List[Item]): BigDecimal = items.foldLeft(BigDecimal("0.0")) {
-    case (acc, item) => acc + price(item)
+  def totalCost(items: List[Item])(implicit monoid: Monoid[Checked]): BigDecimal = {
+    val checked = items.foldLeft(monoid.empty) {
+      case (acc, item) => acc |+| Checked(item)
+    }
+    checked.sum
   }
+}
 
+object Strategies {
+  implicit def step1: Monoid[Checked] = new Monoid[Checked]() {
+    def empty = Checked.ZERO
+    implicit def combine(c1: Checked, c2: Checked): Checked =
+      c1.copy(sum = c1.sum + c2.sum, scanned = c1.scanned |+| c2.scanned)
+  }
 }
