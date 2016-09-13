@@ -4,13 +4,17 @@ import org.scalatest._
 
 class CheckoutTest extends FreeSpec with Matchers {
 
-  import Strategies.step1
+  val items = List(Orange, Orange, Apple, Orange, Apple, Orange, Apple)
 
   "A Checkout" - {
-    "should sum apples and oranges" in {
-      Checkout.totalCost(List(Orange, Apple, Orange)) should equal(1.10)
+    "should checkout with startegy 1" in {
+      import Strategies.step1
+      Checkout.totalCost(items) should equal(2.8)
+    }
+
+    "should checkout with startegy 2" in {
+      import Strategies.step2
+      Checkout.totalCost(items) should equal(1.95)
     }
   }
-
-
 }
