@@ -36,7 +36,23 @@ object Checkout {
 object Strategies {
   implicit def step1: Monoid[Checked] = new Monoid[Checked]() {
     def empty = Checked.ZERO
-    implicit def combine(c1: Checked, c2: Checked): Checked =
+    def combine(c1: Checked, c2: Checked): Checked =
       c1.copy(sum = c1.sum + c2.sum, scanned = c1.scanned |+| c2.scanned)
+  }
+
+  implicit def step2: Monoid[Checked] = new Monoid[Checked]() {
+    def empty = Checked.ZERO
+    def combine(c1: Checked, c2: Checked): Checked = {
+
+      def discount(item: Item, initial: Checked): (BigDecimal, Int) = ???
+
+      val initial = c1.copy(sum = c1.sum + c2.sum, scanned = c1.scanned |+| c2.scanned)
+      val (applesDiscount, applesLeft) = discount(Apple, initial)
+      val (orangesDiscount, orangesLeft) = discount(Orange, initial)
+      initial.copy(
+        sum = initial.sum - applesDiscount - orangesDiscount,
+        scanned = initial.scanned + (Apple -> applesLeft) + (Orange -> orangesLeft)
+      )
+    }
   }
 }
